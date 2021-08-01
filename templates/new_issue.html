@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">  -->
+  <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>  -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@200&display=swap" rel="stylesheet">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+   
+<style>
+input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+  color: #aca49c;
+  font-size: 0.875em;
+}
+
+input:focus::-webkit-input-placeholder, textarea:focus::-webkit-input-placeholder {
+  color: #bbb5af;
+}
+
+input::-moz-placeholder, textarea::-moz-placeholder {
+  color: #aca49c;
+  font-size: 0.875em;
+}
+
+input:focus::-moz-placeholder, textarea:focus::-moz-placeholder {
+  color: #bbb5af;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #aca49c;
+  font-size: 0.875em;
+}
+
+input:focus::placeholder, textarea::focus:placeholder {
+  color: #bbb5af;
+}
+
+input::-ms-placeholder, textarea::-ms-placeholder {
+  color: #aca49c;
+  font-size: 0.875em;
+}
+
+input:focus::-ms-placeholder, textarea:focus::-ms-placeholder {
+  color: #bbb5af;
+}
+
+/* on hover placeholder */
+
+input:hover::-webkit-input-placeholder, textarea:hover::-webkit-input-placeholder {
+  color: #e2dedb;
+  font-size: 0.875em;
+}
+
+input:hover:focus::-webkit-input-placeholder, textarea:hover:focus::-webkit-input-placeholder {
+  color: #cbc6c1;
+}
+
+input:hover::-moz-placeholder, textarea:hover::-moz-placeholder {
+  color: #e2dedb;
+  font-size: 0.875em;
+}
+
+input:hover:focus::-moz-placeholder, textarea:hover:focus::-moz-placeholder {
+  color: #cbc6c1;
+}
+
+input:hover::placeholder, textarea:hover::placeholder {
+  color: #e2dedb;
+  font-size: 0.875em;
+}
+
+input:hover:focus::placeholder, textarea:hover:focus::placeholder {
+  color: #cbc6c1;
+}
+
+input:hover::placeholder, textarea:hover::placeholder {
+  color: #e2dedb;
+  font-size: 0.875em;
+}
+
+input:hover:focus::-ms-placeholder, textarea:hover::focus:-ms-placeholder {
+  color: #cbc6c1;
+}
+
+body {
+  font-family: 'Lato', sans-serif;
+  background: #f6f7f3;
+  color: #b3aca7;
+  font-size: 1.5 em;
+}
+
+nav {
+  font-family: 'Lato', sans-serif;
+  background: #f6f7f3;
+  color: #b3aca7;
+  font-size: 1.5 em;
+}
+#form {
+  position: relative;
+  width: 500px;
+  margin: 50px auto 100px auto;
+}
+
+
+
+input {
+  font-family: 'Lato', sans-serif;
+  font-size: 0.875em;
+  width: 530px;
+  height: 50px;
+  padding: 0px 15px 0px 15px;
+  
+  background: transparent;
+  outline: none;
+  color: #726659;
+  
+  border: solid 1px #b3aca7;
+  border-bottom: none;
+  
+  transition: all 0.3s ease-in-out;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+}
+select {
+  font-family: 'Lato', sans-serif;
+  font-size: 0.875em;
+  width: 530px;
+  height: 50px;
+  padding: 0px 15px 0px 15px;
+  
+  background: transparent;
+  outline: none;
+  color: #726659;
+  
+  border: solid 1px #b3aca7;
+  border-bottom: none;
+  
+  transition: all 0.3s ease-in-out;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+}
+
+select:hover {
+  background: #b3aca7;
+  color: #e2dedb;
+}
+
+input:hover {
+  background: #b3aca7;
+  color: #e2dedb;
+}
+
+textarea {
+  width: 530px;
+  max-width: 530px;
+  height: 200px;
+  max-height: 300px;
+  padding: 15px;
+  
+  background: transparent;
+  outline: none;
+  
+  color: #726659;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.875em;
+  
+  border: solid 1px #b3aca7;
+  
+  transition: all 0.3s ease-in-out;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+}
+
+textarea:hover {
+  background: #b3aca7;
+  color: #e2dedb;
+}
+
+#submit {
+  width: 530px;
+  
+  padding: 0;
+  margin: -5px 0px 0px 0px;
+  
+  font-family: 'Lato', sans-serif;
+  font-size: 0.875em;
+  color: #b3aca7;
+  
+  outline:none;
+  cursor: pointer;
+  
+  border: solid 1px #b3aca7;
+  border-top: none;
+}
+
+#submit:hover {
+  color: #e2dedb;
+}
+</style>
+
+
+<head>
+  <title>Upload New Issue</title>
+</head>
+<nav class="navbar navbar-expand-lg navbar-light bg-light" >
+  <div class="container-fluid">
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="./new_issue.html">New Issue</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/index.html">All Issues</a>
+        </li>
+        
+      </ul>
+
+      <form class="d-flex">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+      
+    </div>
+  </div>
+</nav>
+
+<body >
+  <div class="container-fluid">
+
+  
+    <h3>Upload New Issue</h3>
+
+    <form action="post_userdata/{{user._id if user}}" method="post" enctype="multipart/form-data">
+            
+              <input id="issue" type="text" name="issue" placeholder="Issue" required value={{user.issue if user}}>
+              <input id="incident_count" type="number" name="count" placeholder="Count" required value ={{user.count if user}} >
+              <textarea id="subject" type="text" name="subject" placeholder="Subject" required>{{user.subject if user}} </textarea>
+              <textarea id="description" type="text" name="description" placeholder="Description" required>{{user.description if user}} </textarea>
+              <select id="lobs" name="lob" selected="Merch" required>
+                <option value="Digital" {% if user and user.lob=="Digital" %} selected="selected"{% endif %}>Digital</option>
+                <option value="MFC" {% if user and user.lob=="MFC" %} selected="selected"{% endif %}>MFC</option>
+                <option value="Merch" {% if user and user.lob=="Merch" %} selected="selected"{% endif %}>Merch</option>
+                <option value="Mi9" {% if user and user.lob=="Mi9" %} selected="selected"{% endif %}>Mi9</option>
+              </select>
+
+              <select id="status" name="status" required>
+                <option value="New" {% if user and user.status=="New" %} selected="selected"{% endif %}>New</option>
+                <option value="In Progress" {% if user and user.status=="In Progress" %} selected="selected"{% endif %}>In Progress</option>
+                <option value="Pending" {% if user and user.status=="Pending" %} selected="selected"{% endif %}>Pending</option>
+                <option value="Monitoring" {% if user and user.status=="Monitoring" %} selected="selected"{% endif %}>Monitoring</option>
+                <option value="Completed" {% if user and user.status=="Completed" %} selected="selected"{% endif %}>Completed</option>
+              </select>
+        
+              <!-- <input id="lob" type="" placeholder="LOB"> -->
+              <input id="submit" type="submit" value="Submit">
+      
+    </form>
+    </div>
+
+    <!-- <form action="post_userdata" method="post" enctype="multipart/form-data">
+        <input type="text" name="name">
+        <input type="text" name="language">
+        <input type="submit" value="Submit">
+    </form> -->
+    </body>
+  </html>
