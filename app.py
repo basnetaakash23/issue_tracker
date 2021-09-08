@@ -1,8 +1,11 @@
 import os
-from flask import Flask, jsonify, request, abort, make_response, render_template, redirect
+import flask
+from flask import Flask, jsonify, request, abort, make_response, render_template, redirect, flash, session, url_for
 from flask_pymongo import PyMongo, ObjectId # flask.ext.pymongo deprecated
 from flask_cors import CORS, cross_origin
-from flask_login import LoginManager , login_required , UserMixin , login_user, current_user
+from flask_login import LoginManager , login_required , UserMixin , login_user, current_user, logout_user
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 app = Flask(__name__)
 # app = Flask(__name__, template_folder='../templates')
@@ -18,86 +21,82 @@ mongo = PyMongo(app)
 # App Root
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
-# login_manager = LoginManager()
-# login_manager.init_app(app)
-# login_manager.login_view = "login"
+login = LoginManager(app)
+login.login_view = 'login'
 
-# class User(UserMixin):
+class User:
+    def __init__(self, username):
+        self.username = username
 
-#     def __init__(self, q):
-#         self.id = q['_id']
-#         self.name = q['username']
-#         self.password = q['password']
-        
-#     def __repr__(self):
-#         return "%d/%s/%s" % (self.id, self.name, self.password)
+    @staticmethod
+    def is_authenticated():
+        return True
 
-# user = mongo.db.account
-# user.insert_one({'username':'aakash23','password':'iloveyou123'})
+    @staticmethod
+    def is_active():
+        return True
 
-# Allowed files
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','json'])
-users_info={
-            'name':'Aakash',
-            'language':'C'}
+    @staticmethod
+    def is_anonymous():
+        return False
 
-# @app.route('/fixtures', methods=['GET'])
-# def add():
-#     user = mongo.db.users
-#     user.insert_one(users_info)
-#     user.insert_one({'name': 'Anthony', 'language' : 'ruby'})
-#     user.insert_one({'name': 'Kelly', 'language' : 'C'})
-#     user.insert_one({'name': 'John', 'language' : 'Java'})
-#     user.insert_one({'name': 'Cedric', 'language' : 'Javascript'})
-#     return jsonify({'message':'users added'})
+    def get_id(self):
+        return self.username
 
-# @app.route('/', methods = ["GET","POST"])
+    @staticmethod
+    def check_password(password_hash, password):
+        return check_password_hash(password_hash, password)
+
+@login.user_loader
+def load_user(username):
+    u = mongo.db.account.find_one({"username": username})
+    if not u:
+        return None
+    return User(username=u['username'])
+
+user = mongo.db.account
+user.insert_one({'username':'aakash23','password':'iloveyou123'})
+
 
 # @app.route('/login', methods = ["GET","POST"])
 @app.route('/')
-@app.route('/login')
+@app.route('/login', methods = ["GET","POST"])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('get_users'))
+    if(request.method == "POST"):
+        user_name = request.form.get("username")
+        pass_word = request.form.get("password")
+        user = mongo.db.account
+        q = user.find_one({'username':user_name})
+        if(q and q["password"]== pass_word):
+            user_obj = User(username = q['username'])
+            login_user(user_obj)
+            next_page = request.args.get('next')
+            print("Next_Page",next_page)
+            if not next_page:
+                # return render_template('new_issue.html')
+                print("Inside here")
+                next_page = url_for('get_users')
+
+            print("Loggin in\n")
+            return redirect((next_page))
+            return render_template('new_issue.html')
+
+    print("Could not log in\n")
+
     return render_template('login.html')
-    # return render_template(str(APP_ROOT)+"/templates/login.html")
-    # if(request.method=="POST"):
-    #     user_name = request.form.get("username")
-    #     password = request.form.get("password")
-    #     user = mongo.db.account
-    #     q = user.find_one({'username':user_name})
-    #     if(q):
-    #         if(password == q["password"]):
-    #             id = q['_id']
-    #             user = User(q)
-    #             login_user(user)
-    #             return redirect(request.args.get("next"))
 
-    #         else:
-    #             return abort(401)
-
-    # else:
-    # return render_template('login.html')
-
-
-#It's the home page
-
-# @login_required
 @app.route('/new_issue.html/')
+@login_required
 def home():
     # return render_template('new_issue.html',header='All the users', sub_header='All the languages our users like',
     #                    users=get_all_users())
     return render_template('new_issue.html')
 
-#gets called when this page is called through mavbar
-# @app.route('/new_issue.html')
-# # @login_required
-# def post_data():
-#     # return render_template('new_issue.html',header='All the users', sub_header='All the languages our users like',
-#     #                    users=get_all_users())
-#     return render_template('new_issue.html')
-
 #this is called when a user tries to make any changes to existing data
 @app.route('/new_issue.html/<id>')
-# @login_required
+@login_required
 def post_updateddata(id):
     # return render_template('new_issue.html',header='All the users', sub_header='All the languages our users like',
     #                    users=get_all_users())
@@ -110,7 +109,7 @@ def post_updateddata(id):
 
 # List All Users. Its a home screen
 @app.route('/index.html', methods=['GET'])
-# @login_required
+@login_required
 def get_users():
     return render_template('index.html',header='All the users', sub_header='All the languages our users like',
                        users=get_all_users())
@@ -129,7 +128,7 @@ def get_all_users():
     return output
 
 #posts the new data
-@app.route('/post_userdata/',methods=['POST'])
+@app.route('/new_issue.html/post_userdata/',methods=['POST'])
 def post_userdata():
     user = mongo.db.users
     issue = request.form.get('issue')
@@ -147,12 +146,7 @@ def post_userdata():
 
     # return render_template('index.html',header='All the users', sub_header='All the languages our users like',
     #                    users=get_all_users())
-    return redirect("http://127.0.0.1:5000/")
-    
-# @app.route("/post_userdata/<id>", methods=['POST'])
-# def post_formdata(id):
-#     id = id
-#     return post_updatedata(id)
+    return redirect("http://127.0.0.1:5000/index.html")
 
 #posts the updated data after an edit
 @app.route('/new_issue.html/post_userdata/<id>',methods=['POST'])
@@ -172,8 +166,6 @@ def post_updatedata(id):
     else:
         output = {'error': 'required fields error'}
 
-    # return render_template('index.html',header='All the users', sub_header='All the languages our users like',
-    #                    users=get_all_users())
     return redirect("http://127.0.0.1:5000/index.html")
 
 
@@ -182,11 +174,7 @@ def post_updatedata(id):
 @app.route('/new_issue/<id>', methods=['GET','POST'])
 def new_data(id):
     user = mongo.db.users
-    # if(id=="index.html"):
-    #     return redirect("http://127.0.0.1:5000/index.html")
-    # elif(id=="new_issue.html"):
-    #     return redirect("http://127.0.0.1:5000/")
-        
+      
     q = user.find_one({'_id': ObjectId(id)})
     # return post_data()
     return redirect("http://127.0.0.1:5000/new_issue.html/"+str(q['_id']))
@@ -205,102 +193,11 @@ def delete_user(user_id):
 
     return redirect("http://127.0.0.1:5000/index.html")
 
-
-# Route to Uploade Page
-# @app.route("/upload-page")
-# def main():
-#     return render_template('upload-file.html')
-
-# def allowed_file(filename):
-#     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-# Upload File
-# @app.route('/upload', methods=['POST'])
-# def upload():
-#     result = {'errors': [] }
-#     # Set the target Folder
-#     target = os.path.join(APP_ROOT, 'images/')
-#     # Get sure the folder exists
-#     if not os.path.isdir(target):
-#         os.mkdir(target)
-#     # Loop file to get the images names
-#     for file in request.files.getlist("file"):
-#         filename = file.filename
-#         destination = "/".join([target, filename])
-#         if file and allowed_file(file.filename):
-#             file.save(destination)
-#         else:
-#             if not file.filename:
-#                 file.filename = "empty"
-#             result["errors"].append({file.filename:'not allowed'})
-
-#     return jsonify(result)
-
-
-
-# List user by name
-# @app.route('/users/<user_id>', methods=['GET'])
-# def get_one_user(user_id):
-#     user = mongo.db.users
-#     q = user.find_one({'_id': ObjectId(user_id)})
-#     if q:
-#         output = {'user': {'_id': str(q['_id']), 'name': q['name'], 'language': q['language']}}
-#     else:
-#         output = {'error' : 'user not found'}
-
-#     return jsonify(output)
-
-# Post user
-# @app.route('/users', methods=['POST'])
-# def post_user():
-#     user = mongo.db.users
-#     # name = request.form['name']
-#     # language = request.form['language']
-#     name = str(input("Enter user name"))
-#     language = str(input("Enter the language of choice"))
-#     if (len(name) > 1 and len(language) > 0):
-#         q = user.find_one({'name':name})
-#         if q:
-#             user_found = {'_id': str(q['_id']),'name': q['name'], 'language': q['language']}
-#             output = {'error': 'user exists !', 'user': user_found}
-#         else:
-#             inserted_id = user.insert_one({'name': name, 'language': language})
-#             output = {'message': 'new user created'}
-#     else:
-#         output = {'error': 'required fields error'}
-
-#     return jsonify(output)
-
-# # Update a user
-# @app.route('/users/<user_id>', methods=['PUT'])
-# def update_user(user_id):
-#     user = mongo.db.users
-#     q = user.find_one({'_id': ObjectId(user_id)})
-#     if q:
-#         if request.form['name']:
-#             q['name'] = request.form['name']
-#         if request.form['language']:
-#             q['language'] = request.form['language']
-
-#         user.save(q);
-#         output = {'message' : 'user updated'}
-#     else:
-#         output = {'error' : 'user not found'}
-
-#     return jsonify(output)
-
-# # Delete a user
-# @app.route('/users/<user_id>', methods=['DELETE'])
-# def delete_user(user_id):
-#     user = mongo.db.users
-#     q = user.find_one({'_id': ObjectId(user_id)})
-#     if q:
-#         user.remove(q["_id"])
-#         output = {'message' : 'user deleted'}
-#     else:
-#         output = {'error' : 'user not found'}
-
-#     return jsonify(output)
+@app.route('/logout', methods = ['GET'])
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
 
 @app.route('/users', methods=['DELETE'])
 def delete_users():
@@ -333,4 +230,5 @@ def unhandled_exception(error):
     return make_response(jsonify({'error': 'Unhandled Exception'}), 500)
 
 if __name__ == '__main__':
+    app.secret_key = 'super secret key'
     app.run(debug=True)
